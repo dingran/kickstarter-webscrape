@@ -17,8 +17,10 @@ import re
 import unicodedata
 import sys
 import pandas as pd
+from tqdm import tqdm
 
-working_dir = '/Users/ran/Dropbox/kickstarter_webscrape'
+working_dir = os.path.join(os.getcwd(), os.pardir)
+print working_dir
 output_dir = os.path.join(working_dir, 'output')
 page_store_folder = os.path.join(output_dir, 'index_pages')
 past_proj_page_store_folder = os.path.join(output_dir, 'past_project_pages')
@@ -34,7 +36,7 @@ N_pages = 200
 overwrite = False
 
 # %%
-for p in range(N_pages):
+for p in tqdm(range(N_pages)):
     target_link = target_link_template.format(p)
     page_filename = os.path.join(page_store_folder, 'page_{}.html'.format(p))
 
@@ -60,9 +62,8 @@ for p in range(N_pages):
 
 projs = []
 counter = 0
-for u in file_list:
+for u in tqdm(file_list):
     counter += 1
-    print '{}/{}'.format(counter, len(file_list))
     with open(u, 'r') as f:
         page = f.read()
     soup = BeautifulSoup(page, parser)
@@ -170,7 +171,7 @@ past_proj_page_fname_template = os.path.join(past_proj_page_store_folder, 'past_
 N = len(df_past)
 widgets = ['download past projects', ': ', Percentage(), ' ', Bar(), ' ', ETA()]
 pbar = ProgressBar(widgets=widgets, maxval=N).start()
-overwrite = False
+
 for index, row in df_past.iterrows():
     # print row['url']
     counter += 1
